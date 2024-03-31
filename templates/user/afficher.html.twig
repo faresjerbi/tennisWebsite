@@ -1,0 +1,29 @@
+{% extends 'base-front.html.twig' %}
+
+{% block title %}User list{% endblock %}
+
+
+{% block body %}
+<a href="{{ path('app_user_neww') }}" class="btn btn-primary btn-black">Inscription</a>
+
+<div class="container-fluid">
+    <h1>User list</h1>
+
+    <ul class="list-group">
+        {% for user in users %}
+            <li class="list-group-item">
+                <h5>{{ user.nom }} {{ user.prenom }}</h5>
+                <p>Mail: {{ user.mail }}</p>
+                <p>Genre: {{ user.genre }}</p>
+                <p>Date de naissance: {{ user.date_de_naissance ? user.date_de_naissance|date('Y-m-d') : '' }}</p>
+                <p>Role: {{ user.role }}</p>
+                <p>Niveau: {{ user.niveau }}</p>
+                <p>Disponibilite: {{ user.disponibilite }}</p>
+                
+        {% else %}
+            <li class="list-group-item">No records found</li>
+        {% endfor %}
+    </ul>
+
+</div>
+{% endblock %}

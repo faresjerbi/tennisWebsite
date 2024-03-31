@@ -1,0 +1,9 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="form-errors">
+        {% for error in form.vars.errors %}
+            <span style="color: red;">{{ error.message }}</span><br>
+        {% endfor %}
+    </div>
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
