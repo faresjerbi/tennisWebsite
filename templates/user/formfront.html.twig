@@ -1,10 +1,99 @@
 
-{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-    <div class="form-errors">
-        {% for error in form.vars.errors %}
-            <span style="color: red;">{{ error.message }}</span><br>
-        {% endfor %}
+
+{% block body %}
+<div class="we_do">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Inscription</h3>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'form', 'novalidate': 'novalidate'}}) }}
+                        <div class="form-errors">
+                            {% for error in form.vars.errors %}
+                                <span style="color: red;">{{ error.message }}</span><br>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.nom, 'Nom') }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.nom) %}
+                                <div class="alert alert-danger">{{ form_errors(form.nom) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.prenom, 'Prénom') }}
+                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.prenom) %}
+                                <div class="alert alert-danger">{{ form_errors(form.prenom) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.mail, 'Mail') }}
+                            {{ form_widget(form.mail, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.mail) %}
+                                <div class="alert alert-danger">{{ form_errors(form.mail) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.password, 'Mot de passe') }}
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.password) %}
+                                <div class="alert alert-danger">{{ form_errors(form.password) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.genre, 'Genre') }}
+                            {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.genre) %}
+                                <div class="alert alert-danger">{{ form_errors(form.genre) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.date_de_naissance, 'Date de naissance') }}
+                            {{ form_widget(form.date_de_naissance, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.date_de_naissance) %}
+                                <div class="alert alert-danger">{{ form_errors(form.date_de_naissance) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.role, 'Rôle') }}
+                            {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.role) %}
+                                <div class="alert alert-danger">{{ form_errors(form.role) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.niveau, 'Niveau') }}
+                            {{ form_widget(form.niveau, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.niveau) %}
+                                <div class="alert alert-danger">{{ form_errors(form.niveau) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.disponibilite, 'Disponibilité') }}
+                            {{ form_widget(form.disponibilite, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.disponibilite) %}
+                                <div class="alert alert-danger">{{ form_errors(form.disponibilite) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.img, 'Image') }}
+                            {{ form_widget(form.img, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.img) %}
+                                <div class="alert alert-danger">{{ form_errors(form.img) }}</div>
+                            {% endif %}
+                        </div>
+                        <!-- Ajoutez les autres champs de formulaire ici avec les form_label, form_widget, et form_errors appropriés -->
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+</div>
+{% endblock %}

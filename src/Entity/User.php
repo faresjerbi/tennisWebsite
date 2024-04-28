@@ -5,121 +5,226 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="`user`")
+ */
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[Vich\Uploadable]
-class User
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @Groups({"user:read"})
+     */
     private ?int $id = null;
 
-    #[ORM\Column(length: 10)]
-    #[Assert\NotBlank(message:"nom est nécessaire")]
+    /**
+     * @ORM\Column(length=10)
+     */
     private ?string $nom = null;
 
-    #[ORM\Column(length: 10)]
-    #[Assert\NotBlank(message:"prenom est nécessaire")]
+    /**
+     * @ORM\Column(length=10)
+     */
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message:"mail est nécessaire")]
-    #[Assert\Email(message:"mail '{{value}}' n'est pas valide ")]
-    private ?string $mail = null;
+    /**
+     * @ORM\Column(name="mail", length= 50)
+     */
+    private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message:"password est nécessaire")]
+    /**
+     * @ORM\Column(length= 255)
+     */
     private ?string $password = null;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message:"genre est nécessaire")]
+    /**
+     * @ORM\Column(length= 20)
+     */
     private ?string $genre = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message:"Date de naissance est nécessaire")]
-    public ?\DateTimeInterface $date_de_naissance;
+    /**
+     * @ORM\Column(type=Types::DATE_MUTABLE)
+     */
+    public ?\DateTimeInterface $date_de_naissance = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message:"role est nécessaire")]
-    private ?string $role = null;
+    /**
+     * @ORM\Column(name="role")
+     * @Groups({"user:read"})
+     */
+    private array $roles = [];
 
-    #[ORM\Column(length: 50, nullable: true)]
+    /**
+     * @ORM\Column(length= 50, nullable= true)
+     */
     private ?string $niveau = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    /**
+     * @ORM\Column(length= 50, nullable= true)
+     */
     private ?string $disponibilite = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    /**
+     * @ORM\Column(length= 255, nullable=true)
+     */
     private ?string $img = null;
 
-  
+    /**
+     * @ORM\Column(type="string", name="reset_code", length=255, nullable=true)
+     */
+    private ?string $resetCode = null;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $bloque = false;
+
+    /**
+     * @return bool
+     */
+    public function isBloque(): bool
+    {
+        return $this->bloque;
+    }
+
+    /**
+     * @param bool $bloque
+     */
+    public function setBloque(bool $bloque): void
+    {
+        $this->bloque = $bloque;
+    }
+
+
+    private ?string $confirmPassword = null;
+
+    public function getResetCode(): ?string
+    {
+        return $this->resetCode;
+    }
+
+    public function setResetCode(?string $resetCode): void
+    {
+        $this->resetCode = $resetCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getConfirmPassword(): ?string
+    {
+        return $this->confirmPassword;
+    }
+
+    /**
+     * @param string|null $confirmPassword
+     */
+    public function setConfirmPassword(?string $confirmPassword): void
+    {
+        $this->confirmPassword = $confirmPassword;
+    }
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getNom(): ?string
     {
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    /**
+     * @param string|null $nom
+     */
+    public function setNom(?string $nom): void
     {
         $this->nom = $nom;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPrenom(): ?string
     {
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    /**
+     * @param string|null $prenom
+     */
+    public function setPrenom(?string $prenom): void
     {
         $this->prenom = $prenom;
-
-        return $this;
     }
 
-    public function getMail(): ?string
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
     {
-        return $this->mail;
+        return $this->email;
     }
 
-    public function setMail(string $mail): static
+    /**
+     * @param string|null $email
+     */
+    public function setEmail(?string $email): void
     {
-        $this->mail = $mail;
-
-        return $this;
+        $this->email = $email;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    /**
+     * @param string|null $password
+     */
+    public function setPassword(?string $password): void
     {
         $this->password = $password;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getGenre(): ?string
     {
         return $this->genre;
     }
 
-    public function setGenre(string $genre): static
+    /**
+     * @param string|null $genre
+     */
+    public function setGenre(?string $genre): void
     {
         $this->genre = $genre;
-
-        return $this;
     }
 
     public function getDateDeNaissance(): ?\DateTimeInterface
@@ -130,59 +235,104 @@ class User
     public function setDateDeNaissance(?\DateTimeInterface $date_de_naissance): self
     {
         $this->date_de_naissance = $date_de_naissance;
-    
-        return $this;
-    }
-    
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(string $role): static
-    {
-        $this->role = $role;
 
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getNiveau(): ?string
     {
         return $this->niveau;
     }
 
-    public function setNiveau(?string $niveau): static
+    /**
+     * @param string|null $niveau
+     */
+    public function setNiveau(?string $niveau): void
     {
         $this->niveau = $niveau;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDisponibilite(): ?string
     {
         return $this->disponibilite;
     }
 
-    public function setDisponibilite(?string $disponibilite): static
+    /**
+     * @param string|null $disponibilite
+     */
+    public function setDisponibilite(?string $disponibilite): void
     {
         $this->disponibilite = $disponibilite;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getImg(): ?string
     {
         return $this->img;
     }
 
-    public function setImg(?string $img): static
+    /**
+     * @param string|null $img
+     */
+    public function setImg(?string $img): void
     {
         $this->img = $img;
-
-        return $this;
     }
 
-    // Getters and setters for imageFile...
 
- 
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        $this->plainPassword = null;
+    }
+
+    /**
+     * @deprecated since Symfony 5.3, use getUserIdentifier instead
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
 }

@@ -1,133 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
 
-    <title>tache user</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-
-    <!-- Favicons -->
-    <link href="img/favicon.png" rel="icon">
-    <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-    
-    {% block css %}
-        <!-- Libraries CSS Files -->
-        <link href="libraries/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="libraries/icofont/icofont.min.css" rel="stylesheet">
-        <link href="libraries/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="libraries/boxicons/css/boxicons.min.css" rel="stylesheet">
-        <link href="libraries/venobox/venobox.css" rel="stylesheet">
-        <link href="libraries/aos/aos.css" rel="stylesheet">
-
-        <!-- Template Main CSS File -->
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-    {% endblock %}
-
-    {% block js %} 
-        <!-- Libraries JS Files -->
-        <script src="libraries/jquery/jquery.min.js"></script>
-        <script src="libraries/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="libraries/jquery.easing/jquery.easing.min.js"></script>
-        <script src="libraries/php-email-form/validate.js"></script>
-        <script src="libraries/waypoints/jquery.waypoints.min.js"></script>
-        <script src="libraries/counterup/counterup.min.js"></script>
-        <script src="libraries/owl.carousel/owl.carousel.min.js"></script>
-        <script src="libraries/isotope-layout/isotope.pkgd.min.js"></script>
-        <script src="libraries/venobox/venobox.min.js"></script>
-        <script src="libraries/aos/aos.js"></script>
-
-        <!-- Template Main JS File -->
-        <script src="js/main.js"></script>
-    {% endblock %}
-    
-    /*<style>
-      .navbar-vertical {
-            background-color: #343a40; /* gris foncé */
-            height: 100vh; /* Hauteur plein écran */
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            padding-top: 15px; /* Espace supplémentaire en haut */
-        }
-
-        /* Style pour les liens de la barre de navigation verticale */
-        .navbar-vertical .nav-link {
-            color: #fff; /* Texte blanc */
-        }
-
-        /* Style pour le contenu pour éviter qu'il ne soit masqué derrière la barre de navigation */
-        .content {
-            margin-left: 250px; /* La même largeur que la barre de navigation */
-            padding: 20px;
-        }
-
-        /* Style pour que le tableau soit plus petit */
-        table {
-            background-color: #fff; /* Fond blanc */
-            border-collapse: collapse;
-            width: 20%; /* Largeur du tableau réduite à 50% */
-            max-width: calc(50% - 250px); /* Largeur maximale moins la largeur de la barre de navigation */
-        }
-
-        th, td {
-            border: 1px solid #ddd; /* Bordures grises */
-            padding: 8px;
-            text-align: left;
-            width: 10%;
-        }
-
-        th {
-            background-color: #f2f2f2; /* Fond gris clair pour les entêtes */
-        }
-
-    </style>*/
-</head>
-
-<body class="bg-light">
-    <!-- Barre de navigation verticale -->
-    <nav class="navbar-vertical">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Accueil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">À propos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Services</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- Contenu de la page -->
-    <div class="content">
-      <nav class="navbar-vertical">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Accueil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">À propos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Services</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-            </li>
-        </ul>
-    </nav>
-    </div>
-
-    {% block body %}{% endblock %}
-</body>
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
 </html>

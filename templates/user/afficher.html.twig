@@ -4,26 +4,80 @@
 
 
 {% block body %}
+
+<div class="user_carousel">
+    <div id="userCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for usersBatch in users|batch(3) %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <div class="container">
+                    <div class="row">
+                        {% for user in usersBatch %}
+                        <div class="col-md-4">
+                            {% if user.img %}
+                            <img src="{{ asset('images/' ~ user.img) }}" class="img-fluid" alt="User Image">
+                            {% else %}
+                            <span>No Image Available</span>
+                            {% endif %}
+                            <h3>{{ user.nom }} {{ user.prenom }}</h3>
+                            <p>Mail: {{ user.email }}</p>
+                            <p>Role: {{ user.roles }}</p>
+                            <!-- Ajoutez d'autres détails de l'utilisateur ici -->
+                            <a class="btn btn-primary" href="{{ path('app_user_show', {'id': user.id}) }}">Voir le profil</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#userCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#userCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
+<!-- Script pour contrôler le swipe -->
+<script>
+    $(document).ready(function(){
+        $('#userCarousel').on('touchstart', function(event){
+            var xClick = event.originalEvent.touches[0].pageX;
+            $(this).one('touchmove', function(event){
+                var xMove = event.originalEvent.touches[0].pageX;
+                if( Math.floor(xClick - xMove) > 5 ){
+                    $(this).carousel('next');
+                }
+                else if( Math.floor(xClick - xMove) < -5 ){
+                    $(this).carousel('prev');
+                }
+            });
+            $('.carousel').on('touchend', function(){
+                $(this).off('touchmove');
+            });
+        });
+        
+        // Ajouter un événement click aux boutons de navigation
+        $('.carousel-control-prev').click(function(){
+            $('#userCarousel').carousel('prev');
+        });
+        
+        $('.carousel-control-next').click(function(){
+            $('#userCarousel').carousel('next');
+        });
+    });
+</script>
+ <br>
+   <br>
+   <br>
+   <br>
+   <br>
 <a href="{{ path('app_user_neww') }}" class="btn btn-primary btn-black">Inscription</a>
 
-<div class="container-fluid">
-    <h1>User list</h1>
 
-    <ul class="list-group">
-        {% for user in users %}
-            <li class="list-group-item">
-                <h5>{{ user.nom }} {{ user.prenom }}</h5>
-                <p>Mail: {{ user.mail }}</p>
-                <p>Genre: {{ user.genre }}</p>
-                <p>Date de naissance: {{ user.date_de_naissance ? user.date_de_naissance|date('Y-m-d') : '' }}</p>
-                <p>Role: {{ user.role }}</p>
-                <p>Niveau: {{ user.niveau }}</p>
-                <p>Disponibilite: {{ user.disponibilite }}</p>
-                
-        {% else %}
-            <li class="list-group-item">No records found</li>
-        {% endfor %}
-    </ul>
 
-</div>
 {% endblock %}

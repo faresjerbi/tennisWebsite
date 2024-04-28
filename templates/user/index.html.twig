@@ -3,52 +3,88 @@
 {% block title %}User list{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
- 
-    <h1>User list</h1>
+<div class="card">
+    <div class="card-header">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Mail</th>
-                <th style="max-width: 150px;">Password</th>
-                <th>genre</th>
-                <th>Date de naissance</th>
-                <th>role</th>
-                <th>niveau</th>
-                <th>disponibilite</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.mail }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.genre }}</td>
-                <td>{{ user.date_de_naissance ? user.date_de_naissance|date('Y-m-d') : '' }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ user.niveau }}</td>
-                <td>{{ user.disponibilite }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-primary">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-success">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="12">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <form id="searchForm" class="mb-3" action="{{ path('app_user_index') }}" method="GET">
+            <a href="{{ path('app_user_new') }}" class="btn btn-primary">Create new</a>
+            <div class="input-group">
+                <input type="text" id="searchInput" name="q" class="form-control" placeholder="Rechercher un utilisateur...">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </form>
+        <div class="mb-3">
+            <a href="{{ path('app_user_index', {'sort': 'asc'}) }}" class="btn btn-primary">Tri Ascendant</a>
+            <a href="{{ path('app_user_index', {'sort': 'desc'}) }}" class="btn btn-primary">Tri Descendant</a>
+        </div>
+        <div id="searchResults"></div>
+        <div class="container-fluid">
+            <h1>User list</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Mail</th>
+                    <th>genre</th>
+                    <th>Date de naissance</th>
+                    <th>role</th>
+                    <th>niveau</th>
+                    <th>disponibilite</th>
+                    <th>image</th>
+                    <th>actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.nom }}</td>
+                        <td>{{ user.prenom }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.genre }}</td>
+                        <td>{{ user.DateDeNaissance ? user.DateDeNaissance|date('Y-m-d') : '' }}</td>
+                        <td>{{ user.roles[0] }}</td>
+                        <td>{{ user.niveau }}</td>
+                        <td>{{ user.disponibilite }}</td>
+                        <td>
+                            {% if user.img %}
+                                <img src="{{ asset('images/' ~ user.img) }}" alt="User Image">
+                            {% else %}
+                                <span>No Image Available</span>
+                            {% endif %}
+                        </td>
+                      <td>
+   <td>
+    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-success">Éditer</a>
+    <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+        <button class="btn btn-danger">Supprimer</button>
+    </form>
+    {% if user.bloque %}
+        <form method="post" action="{{ path('app_unblock_user', {'email': user.email}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('unblock' ~ user.id) }}">
+            <button class="btn btn-warning">Débloquer</button>
+        </form>
+    {% else %}
+        <form method="post" action="{{ path('app_block_user', {'email': user.email}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('block' ~ user.id) }}">
+            <button class="btn btn-danger">Bloquer</button>
+        </form>
+    {% endif %}
+</td>
 
-    <a href="{{ path('app_user_new') }}" class="btn btn-primary"">Create new</a>
+</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="12">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

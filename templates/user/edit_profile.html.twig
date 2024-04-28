@@ -1,0 +1,81 @@
+{% extends isBackTemplate ? 'base-back.html.twig' : 'base-front.html.twig' %}
+
+{% block title %}Modifier le profil{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row page-titles mx-0">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h4>Modifier vos informations</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-xxl-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Basic Info</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'form', 'novalidate': 'novalidate'}}) }}
+                        <div class="form-errors"></div>
+                        <div class="form-group">
+                            {{ form_label(form.nom, 'Nom') }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'style': 'width: 100%'}}) }}
+                            {{ form_errors(form.nom) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.prenom, 'Prénom') }}
+                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'style': 'width: 100%'}}) }}
+                            {{ form_errors(form.prenom) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.email, 'Mail') }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'style': 'width: 100%'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.genre, 'Genre') }}
+                            {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.genre) %}
+                                <div class="alert alert-danger">{{ form_errors(form.genre) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.date_de_naissance, 'Date de naissance') }}
+                            {{ form_widget(form.date_de_naissance, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.date_de_naissance) %}
+                                <div class="alert alert-danger">{{ form_errors(form.date_de_naissance) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.niveau, 'Niveau') }}
+                            {{ form_widget(form.niveau, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.niveau) %}
+                                <div class="alert alert-danger">{{ form_errors(form.niveau) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.disponibilite, 'Disponibilité') }}
+                            {{ form_widget(form.disponibilite, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.disponibilite) %}
+                                <div class="alert alert-danger">{{ form_errors(form.disponibilite) }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.img, 'Image') }}
+                            {{ form_widget(form.img, {'attr': {'class': 'form-control'}}) }}
+                            {% if form_errors(form.img) %}
+                                <div class="alert alert-danger">{{ form_errors(form.img) }}</div>
+                            {% endif %}
+                        <button class="btn btn-lg btn-primary">{{ button_label|default('Enregistrer les modifications') }}</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
