@@ -27,51 +27,13 @@ class UserController extends AbstractController
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(Request $request, UserRepository $userRepository): Response
     {
-        // Récupérer le terme de recherche depuis la requête
-        $query = $request->query->get('q');
 
-        // Rechercher les utilisateurs par nom si un terme de recherche est fourni
-        if ($query) {
-            $users = $userRepository->findByNom($query);
-
-            // Vérifier si des utilisateurs ont été trouvés
-            if (empty($users)) {
-                // Si aucun utilisateur n'est trouvé, renvoyer une réponse avec un code d'erreur 404
-                return new Response('Aucun utilisateur trouvé', Response::HTTP_NOT_FOUND);
-            }
-        } else {
-            // Si aucun terme de recherche n'est fourni, récupérer tous les utilisateurs
-            $users = $userRepository->findAll();
-        }
-        $users = $this->getFilteredAndSortedUsers($request, $userRepository);
-
+        $users = $userRepository->findAll();
         return $this->render('user/index.html.twig', [
             'users' => $users,
         ]);
     }
-    
-    #[Route('/block-user/{email}', name: 'app_block_user')]
-    public function blockUser(string $email, Request $request): Response
-    {
-        // Find the user by email
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $email]);
-    
-        if (!$user) {
-            // Gérer le cas où l'utilisateur n'est pas trouvé
-            throw $this->createNotFoundException('User not found');
-        }
-    
-        // Bloquer l'utilisateur
-        $user->setBloque(true);
-    
-        // Enregistrer les modifications dans la base de données
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
-    
-        // Rediriger l'utilisateur vers une autre page, par exemple la liste des utilisateurs
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }
-    
+
     #[Route('/afficher', name: 'app_user_afficher', methods: ['GET'])]
     public function afficher(UserRepository $userRepository): Response
     {
@@ -238,9 +200,6 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        if(!$user)
-        return $this->redirectToRoute('app_login');
-
         $form = $this->createForm(ChangePasswordType::class,$user);
         $form->handleRequest($request);
         $data = $form->getData();
@@ -304,18 +263,9 @@ class UserController extends AbstractController
                     $form->get('password')->getData()
                 )
             );
-            $user->setBloque(true);
 
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // Send email with validation link
-            $email = (new Email())
-                ->from('admin@gmail.com')
-                ->to($user->getEmail())
-                ->subject('Email Validation')
-                ->html('<p>Click <a href="' . $urlGenerator->generate('app_unblock_user', ['email' => $user->getEmail()], UrlGeneratorInterface::ABSOLUTE_URL) . '">here</a> to validate your email.</p>');
-            $mailer->send($email);
 
             return $this->redirectToRoute('app_login');
         }
@@ -346,28 +296,6 @@ class UserController extends AbstractController
         // Redirect the user to the login page
         return $this->redirectToRoute('app_login');
     }
-    #[Route('/unnblock-user/{email}', name: 'app_unnblock_user')]
-    public function unnblockUser(string $email, Request $request): Response
-    {
-
-        // Find the user by token and email
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy([ 'email' => $email]);
-
-        if (!$user) {
-            // Handle case when user is not found
-            throw $this->createNotFoundException('User not found');
-        }
-
-        // Unblock the user
-        $user->setBloque(false);
-
-        // Save changes to the database
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
-
-        // Redirect the user to the login page
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }
 
 
 
@@ -375,8 +303,6 @@ class UserController extends AbstractController
     public function resetPasswordProfileAdmin(Request $request, EntityManagerInterface $entityManager ,UserPasswordHasherInterface $userPasswordHasher)
     {
         $user = $this->getUser();
-        if(!$user)
-        return $this->redirectToRoute('app_login');
 
         $form = $this->createForm(ChangePasswordType::class,$user);
         $form->handleRequest($request);

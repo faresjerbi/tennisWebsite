@@ -1,0 +1,49 @@
+{% extends 'base-front.html.twig' %}
+
+{% block title %}Edit Party{% endblock %}
+
+{% block body %}
+    <div class="we_do">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Edit Party</h3>
+                            </div>
+                            <div class="card-body">
+                                {{ form_start(form, {'attr': {'class': 'form','novalidate': 'novalidate'}}) }}
+                                <div class="form-group">
+                                    {{ form_row(form.datePrevue, {'attr': {'class': 'form-control', 'id': 'date-prevue'}}) }}
+                                    {% if form_errors(form.datePrevue) %}
+                                        <div class="alert alert-danger">{{ form_errors(form.datePrevue) }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.creneauHoraire, 'Créneau Horaire') }}
+                                    {{ form_widget(form.creneauHoraire, {'attr': {'class': 'form-control'}}) }}
+                                    {% if form_errors(form.creneauHoraire) %}
+                                        <div class="alert alert-danger">{{ form_errors(form.creneauHoraire) }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_row(form.club, {'attr': {'class': 'form-control'}}) }}
+                                    {% if form_errors(form.club) %}
+                                        <div class="alert alert-danger">{{ form_errors(form.club) }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_row(form.commentaire, {'attr': {'class': 'form-control'}}) }}
+                                    {% if form_errors(form.commentaire) %}
+                                        <div class="alert alert-danger">{{ form_errors(form.commentaire) }}</div>
+                                    {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-primary">Modifier</button>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

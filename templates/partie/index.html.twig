@@ -1,0 +1,213 @@
+{% extends 'base-front.html.twig' %}
+
+{% block title %}All parties{% endblock %}
+
+{% block body %}
+
+    <div class="portfolio">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <a href="{{ path('app_partie_add') }}" class="btn btn-primary">Ajouter</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage text_align_left">
+                        <h2>Parties</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="container-fluid">
+                        <div class="carousel-caption we1_do">
+                            <div class="row">
+                                {% for party in parties %}
+                                    <div class="col-md-4">
+                                        <div class="we_box text_align_left">
+                                            <h3>Partie #{{ party.id }}</h3>
+                                            <hr> <!-- Add horizontal rule for separation -->
+                                            <p>
+                                                <strong>Propriétaire:</strong> {{ party.user.nom }} {{ party.user.prenom }}<br>
+                                                <strong>Date Prévue:</strong> {{ party.datePrevue ? party.datePrevue|date('Y-m-d') : '' }}<br>
+                                                <strong>Créneau Horaire:</strong> {{ party.creneauHoraire }}<br>
+                                                <strong>Club:</strong> {{ party.club }}<br>
+                                                <strong>Commentaire:</strong> {{ party.commentaire ?? 'Aucun commentaire' }}<br>
+                                                <strong>État:</strong> {% if party.etat == 1 %}
+                                                <span style="color: green;">Accepté</span>
+                                            {% else %}
+                                                <span style="color: orange;">En attente</span>
+                                                {% endif %}<br>
+                                                <strong>Reservé par:</strong>
+                                                {% for locationTerrain in locationTerrains %}
+                                                    {% if locationTerrain.partie == party %}
+                                                        {{ locationTerrain.user.nom }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </p>
+                                            {% if party.etat != 1 %}
+                                                <button class="btn btn-primary reserve-btn mt-3" data-party-id="{{ party.id }}">Réserver</button>
+                                            {% else %}
+                                                <button class="btn btn-primary" disabled>Réserver</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination-container">
+                {% include '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig' with {'pagination': parties} %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage text_align_left">
+                        <h2>Mes Parties</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Date Prévue</th>
+                            <th>Créneau Horaire</th>
+                            <th>Club</th>
+                            <th>Commentaire</th>
+                            <th>État</th>
+                            <th>Reservé par</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for party in myParties %}
+                            <tr>
+                                <td>{{ party.id }}</td>
+                                <td>{{ party.user.nom }} {{ party.user.prenom }}</td>
+                                <td>{{ party.datePrevue? party.datePrevue|date('Y-m-d') : '' }}</td>
+                                <td>{{ party.creneauHoraire }}</td>
+                                <td>{{ party.club }}</td>
+                                <td>{{ party.commentaire }}</td>
+                                <td>
+                                    {% if party.etat == 1 %}
+                                        <span style="color: green;">Accepté</span>
+                                    {% else %}
+                                        <span style="color: orange;">En attente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for locationTerrain in locationTerrains %}
+                                        {% if locationTerrain.partie == party %}
+                                            <p>{{ locationTerrain.user.nom }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if party.etat == 1 %}
+                                        <button class="btn btn-primary" disabled>Edit</button>
+                                    {% else %}
+                                        <a class="btn btn-primary" href="{{ path('edit_partie', {id: party.id}) }}">Edit</a>
+                                    {% endif %}
+
+                                    <a class="btn btn-danger" href="{{ path('delete_partie_with_location_front', {id: party.id}) }}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="titlepage text_align_left">
+                            <h2>Mes Parties reservées</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Date Prévue</th>
+                                <th>Créneau Horaire</th>
+                                <th>Club</th>
+                                <th>Commentaire</th>
+                                <th>État</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for mesLocationTerrain in mesLocationTerrains %}
+                                <tr>
+                                    <td>{{ mesLocationTerrain.partie.id }}</td>
+                                    <td>{{ mesLocationTerrain.partie.user.nom }} {{ mesLocationTerrain.partie.user.prenom }}</td>
+                                    <td>{{ mesLocationTerrain.partie.datePrevue? mesLocationTerrain.partie.datePrevue|date('Y-m-d') : '' }}</td>
+                                    <td>{{ mesLocationTerrain.partie.creneauHoraire }}</td>
+                                    <td>{{ mesLocationTerrain.partie.club }}</td>
+                                    <td>{{ mesLocationTerrain.partie.commentaire }}</td>
+                                    <td>
+                                        {% if mesLocationTerrain.partie.etat == 1 %}
+                                            <span style="color: green;">Accepté</span>
+                                        {% else %}
+                                            <span style="color: orange;">En attente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{{ path('delete_location_terrain_and_update_partie_etat', {'locationTerrainId': mesLocationTerrain.id, 'partyId': mesLocationTerrain.partie.id}) }}">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_location_terrain_and_update_partie_etat') }}">
+                                            <button type="submit" class="btn btn-primary">Annuler Reservation</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <script>
+        // Add an event listener to all reserve buttons
+        document.querySelectorAll('.reserve-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the party ID from the data attribute
+                const partyId = this.getAttribute('data-party-id');
+
+                // Send an AJAX request to reserve the party
+                fetch(`/partie/reserve/${partyId}`, {
+                    method: 'POST', // Or 'GET' if your route accepts GET requests
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // Add this header for Symfony AJAX requests
+                        'Content-Type': 'application/json', // Set the content type
+                        // Add any additional headers if needed
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Reservation failed');
+                        }
+                        // Reload the page after successful reservation
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Reservation error:', error);
+                        // Handle error, show a message, etc.
+                    });
+            });
+        });
+    </script>
+
+{% endblock %}

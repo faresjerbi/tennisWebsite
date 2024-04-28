@@ -1,0 +1,258 @@
+{% extends 'base-back.html.twig' %}
+
+{% block title %}All parties{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.css" integrity="sha256-uq9PNlMzB+1h01Ij9cx7zeE2OR2pLAfRw3uUUOOPKdA=" crossorigin="anonymous">
+
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Parties</strong>
+            <a href="{{ path('app_index_parite') }}" class="btn btn-primary float-right">Go Front</a>
+
+        </div>
+
+        <div class="card-body">
+            <div id="calendrier" style="width: 80%; margin: 0 auto;"></div>
+
+            <div id="div_chart"></div>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script type="text/javascript">
+                {{ gc_draw(piechart, 'div_chart') }}
+            </script>
+
+            <div id="divs">
+                <input class="form-control" type="text" id="search" placeholder="🔍">
+                <a style="color:#FF0000;" class="tg-btn" href="" id="idup">UP ⬆️</a>
+                <a style="color:#25DD28;" class="tg-btn" href="" id="iddown">DOWN ⬇️</a>
+            </div>
+            <table class="table table-striped table-bordered" id="t">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date Prévue</th>
+                    <th>Créneau Horaire</th>
+                    <th>Club</th>
+                    <th>Commentaire</th>
+                    <th>État</th>
+                    <th>Reserver par</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="all">
+                {% for party in parties %}
+                    <tr>
+                        <td>{{ party.id }}</td>
+                        <td>{{ party.datePrevue|date('Y-m-d') }}</td>
+                        <td>{{ party.creneauHoraire }}</td>
+                        <td>{{ party.club }}</td>
+                        <td>{{ party.commentaire }}</td>
+                        <td>
+                            {% if party.etat == 1 %}
+                                <span style="color: green;">Accepté</span>
+                            {% else %}
+                                <span style="color: orange;">En attente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% for locationTerrain in locationTerrains %}
+                                {% if locationTerrain.partie == party %}
+                                    <p>{{ locationTerrain.user.nom }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{ path('delete_partie_with_location', {'id': party.id}) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this party?')">Delete</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tbody id="search"></tbody>
+
+            </table>
+        </div>
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.js" integrity="sha256-DBxkGZLxKsLKhz054qUpBqtotG00r9AELGpSigJujLg=" crossorigin="anonymous"></script>
+
+        <script>
+            window.onload = () => {
+                let calendarElt = document.querySelector("#calendrier")
+
+                let calendar = new FullCalendar.Calendar(calendarElt, {
+                    initialView: 'dayGridMonth', // Display only the days of the month
+                    locale: 'fr',
+                    timeZone: 'Europe/Paris',
+                    headerToolbar: {
+                        start: 'prev,next today',
+                        center: 'title',
+                        end: 'dayGridMonth,timeGridWeek'
+                    },
+                    events: {{ data|raw }},
+                    eventResizableFromStart: true
+                })
+
+                calendar.render()
+            }
+        </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#divs").keyup(function (e) {
+                var value = $("#search").val();
+                if (value.length >= 1 || value.length == 0) {
+                    $.ajax({
+                        url: "{{ path('search_partie') }}",
+                        type: 'GET',
+                        data: {
+                            'searchValue': value
+                        },
+                        success: function (response) {
+                            // Check if response is not empty
+                            if (response) {
+                                // Clear previous search results
+                                $('#t tbody#search').empty();
+                                // Parse JSON response
+                                var partys = JSON.parse(response);
+                                $.each(partys, function (i, party) {
+                                    $('#t tbody#all').hide();
+                                    $('#t tbody#search').append(
+                                        '<tr>' +
+                                        '<td>' + party.id + '</td>' +
+                                        '<td>' + (party.datePrevue ? party.datePrevue.substring(0, 10) : '') + '</td>' +
+                                        '<td>' + party.creneauHoraire + '</td>' +
+                                        '<td>' + party.club + '</td>' +
+                                        '<td>' + (party.commentaire ? party.commentaire : '') + '</td>' +
+                                        '<td>' +
+                                        (party.etat == 1 ? '<span style="color: green;">Accepté</span>' : '<span style="color: orange;">En attente</span>') +
+                                        '</td>' +
+                                        '<td>' +
+                                        (party.reservations.length > 0 ? '<p>' + party.reservations[0] + '</p>' : '') +
+                                        '</td>' +
+                                        '<td>' +
+                                        '<a href="/partie/admin/delete/' + party.id + '" class="btn btn-danger" onclick="return confirm(' + "'Are you sure you want to delete this party?'" + ')">Delete</a>' +
+                                        '</td>' +
+                                        '</tr>'
+                                    );
+                                });
+                            } else {
+                                // Handle empty response
+                                $('#t tbody#all').show();
+                                $('#t tbody#search').empty();
+                                $('#t tbody#search').fadeIn('fast');
+                            }
+                        }
+                    });
+                    return false;
+                }
+            });
+
+            $("#idup").click(function (e) {
+                var value = $("#search").val();
+                var value3 = "ASC";
+
+                $.ajax({
+                    url: "{{ path('search_partie') }}",
+                    type: 'GET',
+                    data: {
+                        'searchValue': value,
+                        'orderid': value3
+                    },
+                    success: function (response) {
+                        // Check if response is not empty
+                        if (response) {
+                            // Clear previous search results
+                            $('#t tbody#search').empty();
+                            var partys = JSON.parse(response);
+                            $.each(partys, function (i, party) {
+                                $('#t tbody#all').hide();
+                                $('#t tbody#search').append(
+                                    '<tr>' +
+                                    '<td>' + party.id + '</td>' +
+                                    '<td>' + (party.datePrevue ? party.datePrevue.substring(0, 10) : '') + '</td>' +
+                                    '<td>' + party.creneauHoraire + '</td>' +
+                                    '<td>' + party.club + '</td>' +
+                                    '<td>' + (party.commentaire ? party.commentaire : '') + '</td>' +
+                                    '<td>' +
+                                    (party.etat == 1 ? '<span style="color: green;">Accepté</span>' : '<span style="color: orange;">En attente</span>') +
+                                    '</td>' +
+                                    '<td>' +
+                                    (party.reservations.length > 0 ? '<p>' + party.reservations[0] + '</p>' : '') +
+                                    '</td>' +
+                                    '<td>' +
+                                    '<a href="/partie/admin/delete/' + party.id + '" class="btn btn-danger" onclick="return confirm(' + "'Are you sure you want to delete this party?'" + ')">Delete</a>' +
+                                    '</td>' +
+                                    '</tr>'
+                                );
+                            });
+                        } else {
+                            // Handle empty response
+                            $('#t tbody#all').show();
+                            $('#t tbody#search').empty();
+                            $('#t tbody#search').fadeIn('fast');
+                        }
+                    }
+                });
+                return false;
+
+            });
+
+            $("#iddown").click(function (e) {
+                var value = $("#search").val();
+                var value3 = "DESC";
+
+                $.ajax({
+                    url: "{{ path('search_partie') }}",
+                    type: 'GET',
+                    data: {
+                        'searchValue': value,
+                        'orderid': value3
+                    },
+                    success: function (response) {
+                        // Check if response is not empty
+                        if (response) {
+                            // Clear previous search results
+                            $('#t tbody#search').empty();
+                            // Parse JSON response
+                            var partys = JSON.parse(response);
+                            $.each(partys, function (i, party) {
+                                $('#t tbody#all').hide();
+                                $('#t tbody#search').append(
+                                    '<tr>' +
+                                    '<td>' + party.id + '</td>' +
+                                    '<td>' + (party.datePrevue ? party.datePrevue.substring(0, 10) : '') + '</td>' +
+                                    '<td>' + party.creneauHoraire + '</td>' +
+                                    '<td>' + party.club + '</td>' +
+                                    '<td>' + (party.commentaire ? party.commentaire : '') + '</td>' +
+                                    '<td>' +
+                                    (party.etat == 1 ? '<span style="color: green;">Accepté</span>' : '<span style="color: orange;">En attente</span>') +
+                                    '</td>' +
+                                    '<td>' +
+                                    (party.reservations.length > 0 ? '<p>' + party.reservations[0] + '</p>' : '') +
+                                    '</td>' +
+                                    '<td>' +
+                                    '<a href="/partie/admin/delete/' + party.id + '" class="btn btn-danger" onclick="return confirm(' + "'Are you sure you want to delete this party?'" + ')">Delete</a>' +
+                                    '</td>' +
+                                    '</tr>'
+                                );
+                            });
+                        } else {
+                            // Handle empty response
+                            $('#t tbody#all').show();
+                            $('#t tbody#search').empty();
+                            $('#t tbody#search').fadeIn('fast');
+                        }
+                    }
+                });
+                return false;
+
+            });
+        });
+    </script>
+{% endblock %}

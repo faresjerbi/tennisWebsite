@@ -55,27 +55,13 @@
                                 <span>No Image Available</span>
                             {% endif %}
                         </td>
-                      <td>
-   <td>
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-success">Éditer</a>
-    <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-        <button class="btn btn-danger">Supprimer</button>
-    </form>
-    {% if user.bloque %}
-        <form method="post" action="{{ path('app_unblock_user', {'email': user.email}) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('unblock' ~ user.id) }}">
-            <button class="btn btn-warning">Débloquer</button>
-        </form>
-    {% else %}
-        <form method="post" action="{{ path('app_block_user', {'email': user.email}) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('block' ~ user.id) }}">
-            <button class="btn btn-danger">Bloquer</button>
-        </form>
-    {% endif %}
-</td>
-
-</td>
+                        <td>
+                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-success">edit</a>
+                            <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 {% else %}
                     <tr>
